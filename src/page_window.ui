@@ -6,269 +6,280 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1343</width>
-    <height>875</height>
+    <width>1200</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Page Window</string>
   </property>
+  <!-- Central Widget with Scroll Area -->
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="pageButton1">
-    <property name="geometry">
-     <rect>
-      <x>470</x>
-      <y>10</y>
-      <width>200</width>
-      <height>50</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Page 1</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pageButton2">
-    <property name="geometry">
-     <rect>
-      <x>670</x>
-      <y>10</y>
-      <width>200</width>
-      <height>50</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Page 2</string>
-    </property>
-   </widget>
-   <widget class="QStackedWidget" name="stackedWidget">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>70</y>
-      <width>1300</width>
-      <height>771</height>
-     </rect>
-    </property>
-    <property name="currentIndex">
-     <number>1</number>
-    </property>
-    <widget class="QWidget" name="page1">
-     <widget class="QRadioButton" name="radioButtonDG_page1">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>50</y>
-        <width>150</width>
-        <height>50</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>25</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>DG</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioButtonDGIDEM_page1">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>90</y>
-        <width>170</width>
-        <height>50</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>25</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>DG IDEM</string>
-      </property>
-     </widget>
-     <widget class="QTextEdit" name="textInputPage1">
-      <property name="geometry">
-       <rect>
-        <x>190</x>
-        <y>10</y>
-        <width>1110</width>
-        <height>170</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>15</pointsize>
-       </font>
-      </property>
-      <property name="placeholderText">
-       <string>Enter multiple lines for Page 1</string>
-      </property>
-     </widget>
-     <widget class="QTextEdit" name="diagnosisInputPage1">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>200</y>
-        <width>1300</width>
-        <height>460</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>15</pointsize>
-       </font>
-      </property>
-      <property name="placeholderText">
-       <string>Content of the diagnosis</string>
-      </property>
-     </widget>
-     <widget class="QDateEdit" name="dateEditPage1">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>730</y>
-        <width>200</width>
-        <height>40</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>15</pointsize>
-       </font>
-      </property>
-      <property name="displayFormat">
-       <string>dd-MMM-yyyy</string>
-      </property>
-      <property name="calendarPopup">
+   <layout class="QVBoxLayout" name="verticalLayoutMain">
+    <!-- Add Scroll Area to make content scrollable on smaller screens -->
+    <item>
+     <widget class="QScrollArea" name="scrollArea">
+      <property name="widgetResizable">
        <bool>true</bool>
       </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <layout class="QVBoxLayout" name="scrollAreaLayout">
+        <!-- Page Buttons Layout -->
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayoutButtons">
+          <item>
+           <widget class="QPushButton" name="pageButton1">
+            <property name="text">
+             <string>DG</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pageButton2">
+            <property name="text">
+             <string>DG IDEM</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <!-- Stacked Widget for Pages -->
+        <item>
+         <widget class="QStackedWidget" name="stackedWidget">
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <!-- Page 1 -->
+          <widget class="QWidget" name="page1">
+           <layout class="QVBoxLayout" name="verticalLayoutPage1">
+            <!-- Radio Buttons -->
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayoutRadiosPage1">
+              <item>
+               <widget class="QRadioButton" name="radioButtonDG_page1">
+                <property name="font">
+                 <font>
+                  <pointsize>25</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>DG</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="radioButtonDGIDEM_page1">
+                <property name="font">
+                 <font>
+                  <pointsize>25</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>DG IDEM</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <!-- Top Text Input -->
+            <item>
+             <widget class="QTextEdit" name="textInputPage1">
+              <property name="font">
+               <font>
+                <pointsize>15</pointsize>
+               </font>
+              </property>
+              <property name="placeholderText">
+               <string>DG DEO:VELIKIM SLOVIMA BEZ DG PREFIKSA</string>
+              </property>
+              <property name="minimumHeight">
+               <number>80</number>
+              </property>
+              <property name="maximumHeight">
+               <number>120</number>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <!-- Diagnosis Input -->
+            <item>
+             <widget class="QTextEdit" name="diagnosisInputPage1">
+              <property name="font">
+               <font>
+                <pointsize>15</pointsize>
+               </font>
+              </property>
+              <property name="placeholderText">
+               <string>Tekst na srpskom koji pises</string>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>1</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <!-- Bottom Controls -->
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayoutBottomPage1">
+              <item>
+               <widget class="QDateEdit" name="dateEditPage1">
+                <property name="font">
+                 <font>
+                  <pointsize>15</pointsize>
+                 </font>
+                </property>
+                <property name="displayFormat">
+                 <string>dd-MMM-yyyy</string>
+                </property>
+                <property name="calendarPopup">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacerPage1">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="log_button_page1">
+                <property name="text">
+                 <string>Napravi izeštaj</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+          <!-- Page 2 -->
+          <widget class="QWidget" name="page2">
+           <layout class="QVBoxLayout" name="verticalLayoutPage2">
+            <!-- Radio Buttons -->
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayoutRadiosPage2">
+              <item>
+               <widget class="QRadioButton" name="radioButtonDG_page2">
+                <property name="font">
+                 <font>
+                  <pointsize>25</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>DG</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="radioButtonDGIDEM_page2">
+                <property name="font">
+                 <font>
+                  <pointsize>25</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>DG IDEM</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <!-- Top Text Input -->
+            <item>
+             <widget class="QTextEdit" name="textInputPage2">
+              <property name="font">
+               <font>
+                <pointsize>15</pointsize>
+               </font>
+              </property>
+              <property name="placeholderText">
+               <string>DG DEO:VELIKIM SLOVIMA BEZ DG PREFIKSA</string>
+              </property>
+              <property name="minimumHeight">
+               <number>80</number>
+              </property>
+              <property name="maximumHeight">
+               <number>120</number>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <!-- Diagnosis Input -->
+            <item>
+             <widget class="QTextEdit" name="diagnosisInputPage2">
+              <property name="font">
+               <font>
+                <pointsize>15</pointsize>
+               </font>
+              </property>
+              <property name="placeholderText">
+               <string>Tekst na srpskom koji pises</string>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>1</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <!-- Bottom Controls -->
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayoutBottomPage2">
+              <item>
+               <widget class="QDateEdit" name="dateEditPage2">
+                <property name="font">
+                 <font>
+                  <pointsize>15</pointsize>
+                 </font>
+                </property>
+                <property name="displayFormat">
+                 <string>dd-MMM-yyyy</string>
+                </property>
+                <property name="calendarPopup">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacerPage2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="log_button_page2">
+                <property name="text">
+                 <string>Submit</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
-     <widget class="QPushButton" name="log_button_page1">
-      <property name="geometry">
-       <rect>
-        <x>1150</x>
-        <y>720</y>
-        <width>150</width>
-        <height>50</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Submit</string>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="page2">
-     <widget class="QRadioButton" name="radioButtonDG_page2">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>50</y>
-        <width>150</width>
-        <height>50</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>25</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>DG</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioButtonDGIDEM_page2">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>90</y>
-        <width>170</width>
-        <height>50</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>25</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>DG IDEM</string>
-      </property>
-     </widget>
-     <widget class="QTextEdit" name="textInputPage2">
-      <property name="geometry">
-       <rect>
-        <x>190</x>
-        <y>10</y>
-        <width>1110</width>
-        <height>170</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>15</pointsize>
-       </font>
-      </property>
-      <property name="placeholderText">
-       <string>Enter multiple lines for Page 2</string>
-      </property>
-     </widget>
-     <widget class="QTextEdit" name="diagnosisInputPage2">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>200</y>
-        <width>1300</width>
-        <height>460</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>15</pointsize>
-       </font>
-      </property>
-      <property name="placeholderText">
-       <string>Content of the diagnosis</string>
-      </property>
-     </widget>
-     <widget class="QDateEdit" name="dateEditPage2">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>730</y>
-        <width>200</width>
-        <height>40</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>15</pointsize>
-       </font>
-      </property>
-      <property name="displayFormat">
-       <string>dd-MMM-yyyy</string>
-      </property>
-      <property name="calendarPopup">
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="log_button_page2">
-      <property name="geometry">
-       <rect>
-        <x>1150</x>
-        <y>720</y>
-        <width>150</width>
-        <height>50</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Submit</string>
-      </property>
-     </widget>
-    </widget>
-   </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
