@@ -1,4 +1,4 @@
-# My Python App for Doctor Reports
+# My Python App for Medical Reports
 
 This small Python app is designed to generate doctor's reports as PDFs. It was created for a family member to help with organizing medical documentation.
 
