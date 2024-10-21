@@ -2,7 +2,8 @@ import sys
 import logging
 import os
 import subprocess
-from PyQt5 import uic, QtWidgets
+import json
+from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QStackedWidget, QRadioButton, QSpinBox, QTextEdit, QDateEdit, QScrollArea, QSizePolicy
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
@@ -11,6 +12,7 @@ from reportlab.pdfgen import canvas
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
 from datetime import datetime
+
 
 
 # Configure logging
@@ -26,12 +28,29 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
+def load_config():
+    """Load configuration from a JSON file."""
+    config_path = resource_path('config.json')
+    try:
+        with open(config_path, 'r', encoding='utf-8') as file:
+            config = json.load(file)
+            return config
+    except FileNotFoundError:
+        logging.error(f"Configuration file not found: {config_path}")
+        return {}
+    except json.JSONDecodeError as e:
+        logging.error(f"Error decoding JSON: {e}")
+        return {}
+
 class PageWindow(QMainWindow):
     def __init__(self, num_pages, full_name, birth_date, jmbg):
         super().__init__()
 
         # Load the page_window.ui file
         uic.loadUi(resource_path("page_window.ui"), self)
+
+        # Load the configuration data
+        self.config = load_config()  # Ensure this line is present
 
         # Add scrollable area and set resizable behavior
         self.scroll_area = QScrollArea(self)
@@ -56,19 +75,11 @@ class PageWindow(QMainWindow):
         self.textInputPage1 = self.findChild(QTextEdit, "textInputPage1")
         self.textInputPage2 = self.findChild(QTextEdit, "textInputPage2")
 
-        # Connect the textChanged signal to check line length
-        self.textInputPage1.textChanged.connect(self.check_line_length)
-        self.textInputPage2.textChanged.connect(self.check_line_length)
 
         # Access page buttons and stacked widget from the .ui file
         self.page_buttons = [self.findChild(QPushButton, f"pageButton{i+1}") for i in range(num_pages)]
         self.stacked_widget = self.findChild(QStackedWidget, "stackedWidget")
 
-        # Access radio buttons for pages
-        self.radioButtonDG_page1 = self.findChild(QRadioButton, "radioButtonDG_page1")
-        self.radioButtonDGIDEM_page1 = self.findChild(QRadioButton, "radioButtonDGIDEM_page1")
-        self.radioButtonDG_page2 = self.findChild(QRadioButton, "radioButtonDG_page2")
-        self.radioButtonDGIDEM_page2 = self.findChild(QRadioButton, "radioButtonDGIDEM_page2")
 
         # Access text input fields for both pages
         self.textInputPage1 = self.findChild(QTextEdit, "textInputPage1")
@@ -103,25 +114,6 @@ class PageWindow(QMainWindow):
             if button:
                 button.clicked.connect(lambda _, x=i: self.switch_page(x + 1))
     
-    def check_line_length(self):
-        """Check if any line in QTextEdit exceeds 80 characters and highlight it."""
-        sender = self.sender()  # Get the sender object (QTextEdit)
-        text = sender.toPlainText()
-
-        # Split text into lines
-        lines = text.split('\n')
-        background_warning = False
-
-        for line in lines:
-            if len(line) > 80:
-                background_warning = True
-                break
-
-        # Change background color if line exceeds 80 characters
-        if background_warning:
-            sender.setStyleSheet("QTextEdit { background-color: #FFDDDD; }")  # Light red
-        else:
-            sender.setStyleSheet("")  # Reset to default
 
     def setAdaptiveFontSize(self):
         """Adjust font size based on screen resolution."""
@@ -144,10 +136,6 @@ class PageWindow(QMainWindow):
 
             # Set default radio button selections and disable others
             if page_number == 1:
-                self.radioButtonDG_page1.setChecked(True)
-                self.radioButtonDGIDEM_page1.setEnabled(False)
-                self.radioButtonDG_page1.setStyleSheet(self.get_selected_style())
-                self.radioButtonDGIDEM_page1.setStyleSheet(self.get_disabled_style())
                 if self.num_pages == 1:
                     self.log_button_page1.show()
                 else:
@@ -155,10 +143,6 @@ class PageWindow(QMainWindow):
                 self.log_button_page2.hide()
 
             elif page_number == 2:
-                self.radioButtonDGIDEM_page2.setChecked(True)
-                self.radioButtonDG_page2.setEnabled(False)
-                self.radioButtonDGIDEM_page2.setStyleSheet(self.get_selected_style())
-                self.radioButtonDG_page2.setStyleSheet(self.get_disabled_style())
                 self.log_button_page2.show()
                 self.log_button_page1.hide()
 
@@ -193,25 +177,7 @@ class PageWindow(QMainWindow):
                         }
                     """)
 
-    def get_selected_style(self):
-        """Return the style for the selected radio button."""
-        return """
-            QRadioButton {
-                color: #4CAF50;  /* Green */
-                font-weight: bold;
-            }
-        """
 
-    def get_disabled_style(self):
-        """Return the style for the disabled (unselected) radio button."""
-        return """
-            QRadioButton {
-                color: gray;
-            }
-            QRadioButton::indicator {
-                background-color: lightgray;
-            }
-        """
 
     def format_date(self, date_str):
         """Format date to 'dd.mm.yyyy.' format with leading zeros."""
@@ -222,17 +188,19 @@ class PageWindow(QMainWindow):
             logging.error(f"Invalid date format: {date_str}")
             return date_str
 
-    def draw_header(self, pdf_canvas, base_x, y_position, header_text):
-        """Draw the header with centered alignment on the given canvas."""
+    def draw_header(self, pdf_canvas, base_x, y_position):
+        """Draw the header with centered alignment using data from the JSON file."""
+        # Load header text from the config
+        header_text = self.config.get("header", ["Default Header"])
+        
         pdf_canvas.setFont("NotoSans-Bold", 12)
         max_line_width = max(pdf_canvas.stringWidth(line, "NotoSans-Bold", 12) for line in header_text)
 
-        # Draw each line of the header text
         for line in header_text:
             line_width = pdf_canvas.stringWidth(line, "NotoSans-Bold", 12)
-            offset = (max_line_width - line_width) / 2  # Calculate offset for center alignment
+            offset = (max_line_width - line_width) / 2
             pdf_canvas.drawString(base_x + offset, y_position, line)
-            y_position -= 20  # Move to the next line
+            y_position -= 20
 
         return y_position
 
@@ -278,6 +246,11 @@ class PageWindow(QMainWindow):
         lines = dg_text.split('\n')
 
         for line in lines:
+            if line.strip() == "":
+                # Add space for empty lines in the input
+                y_position -= 15
+                continue
+
             words = line.split()
             current_line = ""
             
@@ -357,26 +330,24 @@ class PageWindow(QMainWindow):
         return y_position
     
     def draw_footer(self, pdf_canvas, base_x, y_position, page_date):
-        """Draw the date and doctor's information at the bottom of the page."""
+        """Draw the date and doctor's information at the bottom of the page using data from the JSON file."""
         pdf_canvas.setFont("NotoSans-Bold", 10)
-
 
         # Draw the date text on the left side
         footer_left_x = base_x
         footer_left_y = y_position - 80  # Move it 4-5 lines down
         pdf_canvas.drawString(footer_left_x, footer_left_y, f"{self.format_date(page_date)} Beograd")
 
-        # Draw the doctor's info at the bottom right, centered horizontally
-        doctor_info = [
-            "Dr. Svetlana Šlapek Branković",
-            "Specijalista fizikalne medicine i rehabilitacije"
-        ]
+        # Load the footer information from the configuration file
+        footer_info = self.config.get("footer", ["Default Doctor Info"])
+        max_line_width = max(pdf_canvas.stringWidth(line, "NotoSans", 10) for line in footer_info)
 
-        max_line_width = max(pdf_canvas.stringWidth(line, "NotoSans", 10) for line in doctor_info)
-        footer_right_x = A4[0] - base_x - max_line_width  # Align to the right edge
+        # Align the footer info to the right side
+        footer_right_x = A4[0] - base_x - max_line_width
         footer_right_y = footer_left_y
 
-        for line in doctor_info:
+        # Draw each line of the footer information
+        for line in footer_info:
             line_width = pdf_canvas.stringWidth(line, "NotoSans", 10)
             offset = (max_line_width - line_width) / 2  # Center horizontally
             pdf_canvas.drawString(footer_right_x + offset, footer_right_y, line)
@@ -385,27 +356,27 @@ class PageWindow(QMainWindow):
         return y_position - 100  # Adjust the y-position to account for the footer height
 
 
+
     def generate_pdf(self):
         """Generate a PDF report based on the input data."""
-        file_name = f"{self.full_name.replace(' ', '_').replace('-', '_')}_{datetime.now().strftime('%Y%m%d')}.pdf"
-        pdf_canvas = canvas.Canvas(file_name, pagesize=A4)
+
+        # Create the /izvestaj/ folder if it doesn't exist
+        pdf_output_folder = os.path.join(os.getcwd(), 'izvestaji')
+        if not os.path.exists(pdf_output_folder):
+            os.makedirs(pdf_output_folder)
+
+        # Generate the PDF file name with the /izvestaj/ directory
+        pdf_file_name = os.path.join(pdf_output_folder, f"{self.full_name.replace(' ', '_').replace('-', '_')}_{datetime.now().strftime('%Y%m%d')}.pdf")
+
+        # Generate the TXT file name in the current working directory
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        txt_file_name = f"{self.full_name.replace(' ', '_').replace('-', '_')}_{timestamp}.txt"
+
+        pdf_canvas = canvas.Canvas(pdf_file_name, pagesize=A4)
         width, height = A4
 
         regular_font_path = resource_path('NotoSans-Regular.ttf')
         bold_font_path = resource_path('NotoSans-Bold.ttf')
-
-        # Register the font (use your actual font path)
-        pdfmetrics.registerFont(TTFont('NotoSans', 'NotoSans-Bold.ttf'))
-
-        # Define the string and font
-        test_string = "QWERTYQWERTYQWERTYQWERTYQWERTYQWERTYQWERTYQWERTYQWERTYQWERTYQWERTYQWERTYQWER"
-        font_name = 'NotoSans'
-        font_size = 10  # Example font size
-
-        # Calculate the pixel width of the string
-        string_width = pdfmetrics.stringWidth(test_string, font_name, font_size)
-
-        print(f"The width of the string in pixels is: {string_width}")
 
         # Register the fonts
         if os.path.exists(regular_font_path) and os.path.exists(bold_font_path):
@@ -422,19 +393,12 @@ class PageWindow(QMainWindow):
         # Define custom margins
         top_margin = 30
 
-        # Define the header text
-        header_text = [
-            "SPECIJALISTIČKA LEKARSKA ORDINACIJA",
-            "IZ OBLASTI FIZIKALNE MEDICINE I REHABILITACIJE",
-            "PHYSICALDOKTOR BEOGRAD"
-        ]
-
         # Set the base x-coordinate for the header and patient info
         base_x = 25
 
         # Draw the header, patient info, and DG table on Page 1
         y_position = height - top_margin
-        y_position = self.draw_header(pdf_canvas, base_x, y_position, header_text)
+        y_position = self.draw_header(pdf_canvas, base_x, y_position)
         y_position = self.draw_patient_info(pdf_canvas, base_x, y_position - 10)
         dg_text_page1 = self.textInputPage1.toPlainText() or "IDEM"
         y_position = self.draw_dg_table(pdf_canvas, base_x, y_position - 20, dg_text_page1)
@@ -445,6 +409,9 @@ class PageWindow(QMainWindow):
         page_date_page1 = self.dateEditPage1.date().toString('dd-MM-yyyy')
         y_position = self.draw_footer(pdf_canvas, base_x, y_position, page_date_page1)
 
+        # Initialize variables for Page 2 content
+        dg_text_page2 = None
+        diagnosis_content_page2 = None
 
         # Add content for Page 2 if applicable
         if self.num_pages > 1:
@@ -452,23 +419,49 @@ class PageWindow(QMainWindow):
 
             # Draw the header, patient info, and DG table on Page 2
             y_position = height - top_margin
-            y_position = self.draw_header(pdf_canvas, base_x, y_position, header_text)
+            y_position = self.draw_header(pdf_canvas, base_x, y_position)
             y_position = self.draw_patient_info(pdf_canvas, base_x, y_position - 10)
             dg_text_page2 = self.textInputPage2.toPlainText() or "IDEM"
             y_position = self.draw_dg_table(pdf_canvas, base_x, y_position - 20, dg_text_page2)
             # Draw diagnosis content for Page 2
             diagnosis_content_page2 = self.diagnosisInputPage2.toPlainText()
             y_position = self.draw_diagnosis_content(pdf_canvas, base_x, y_position, diagnosis_content_page2)
-             # Draw footer on Page 2
+            # Draw footer on Page 2
             page_date_page2 = self.dateEditPage2.date().toString('dd-MM-yyyy')
             y_position = self.draw_footer(pdf_canvas, base_x, y_position, page_date_page2)
 
-
         pdf_canvas.save()
-        logging.info(f"PDF report saved as {file_name}")
+        logging.info(f"PDF report saved as {pdf_file_name}")
+
+        # Save content to a .txt file in the current working directory
+        self.save_content_to_txt(txt_file_name, dg_text_page1, diagnosis_content_page1, dg_text_page2, diagnosis_content_page2)
 
         # Open the generated PDF automatically
-        self.open_pdf(file_name)
+        self.open_pdf(pdf_file_name)
+
+
+    def save_content_to_txt(self, txt_file_name, dg_text_page1, diagnosis_content_page1, dg_text_page2=None, diagnosis_content_page2=None):
+        """Save the DG and diagnosis content to a .txt file in the /txt/ subfolder."""
+        txt_folder = "txt"
+        os.makedirs(txt_folder, exist_ok=True)
+        txt_file_path = os.path.join(txt_folder, txt_file_name)
+
+        try:
+            with open(txt_file_path, 'w', encoding='utf-8') as txt_file:
+                txt_file.write("Page 1 - DG:\n")
+                txt_file.write(dg_text_page1 + "\n\n")
+                txt_file.write("Page 1 - Diagnosis Content:\n")
+                txt_file.write(diagnosis_content_page1 + "\n\n")
+                
+                if dg_text_page2 and diagnosis_content_page2:
+                    txt_file.write("Page 2 - DG:\n")
+                    txt_file.write(dg_text_page2 + "\n\n")
+                    txt_file.write("Page 2 - Diagnosis Content:\n")
+                    txt_file.write(diagnosis_content_page2 + "\n\n")
+
+            logging.info(f"Content saved to {txt_file_path}")
+        except Exception as e:
+            logging.error(f"Failed to save content to .txt file: {e}")
 
     def open_pdf(self, file_name):
         """Open the generated PDF file automatically."""
@@ -541,7 +534,21 @@ class MainWindow(QMainWindow):
 
         # Open the page window with the specified number of pages and patient information
         self.page_window = PageWindow(num_pages, full_name, birth_date, jmbg)
+
+        # Hide the second page button and DG IDEM radio buttons if only one page is selected
+        if num_pages == 1:
+            # Hide the "pageButton2"
+            page_button_2 = self.page_window.findChild(QPushButton, "pageButton2")
+            if page_button_2:
+                page_button_2.hide()
+
+
+
+
         self.page_window.show()
+
+
+
 
 def main():
     app = QApplication(sys.argv)

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1200</width>
-    <height>800</height>
+    <height>700</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,21 +16,51 @@
   <!-- Central Widget with Scroll Area -->
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayoutMain">
-    <!-- Add Scroll Area to make content scrollable on smaller screens -->
+    <!-- Add Scroll Area for content -->
     <item>
      <widget class="QScrollArea" name="scrollArea">
       <property name="widgetResizable">
        <bool>true</bool>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>800</width>
+        <height>600</height>
+       </size>
       </property>
       <widget class="QWidget" name="scrollAreaWidgetContents">
        <layout class="QVBoxLayout" name="scrollAreaLayout">
         <!-- Page Buttons Layout -->
         <item>
          <layout class="QHBoxLayout" name="horizontalLayoutButtons">
+          <property name="spacing">
+           <number>10</number>
+          </property>
           <item>
            <widget class="QPushButton" name="pageButton1">
             <property name="text">
              <string>DG</string>
+            </property>
+            <property name="minimumHeight">
+             <number>40</number>
+            </property>
+            <property name="styleSheet">
+             <string>
+              QPushButton {
+                  background-color: #4CAF50;
+                  color: white;
+                  font-size: 18px;
+                  font-weight: bold;
+                  border: 2px solid #2E7D32;
+              }
+              QPushButton:disabled {
+                  background-color: #BDBDBD;
+                  color: #FFFFFF;
+              }
+              QPushButton:pressed {
+                  background-color: #388E3C;
+              }
+             </string>
             </property>
            </widget>
           </item>
@@ -38,6 +68,27 @@
            <widget class="QPushButton" name="pageButton2">
             <property name="text">
              <string>DG IDEM</string>
+            </property>
+            <property name="minimumHeight">
+             <number>40</number>
+            </property>
+            <property name="styleSheet">
+             <string>
+              QPushButton {
+                  background-color: #4CAF50;
+                  color: white;
+                  font-size: 18px;
+                  font-weight: bold;
+                  border: 2px solid #2E7D32;
+              }
+              QPushButton:disabled {
+                  background-color: #BDBDBD;
+                  color: #FFFFFF;
+              }
+              QPushButton:pressed {
+                  background-color: #388E3C;
+              }
+             </string>
             </property>
            </widget>
           </item>
@@ -52,56 +103,21 @@
           <!-- Page 1 -->
           <widget class="QWidget" name="page1">
            <layout class="QVBoxLayout" name="verticalLayoutPage1">
-            <!-- Radio Buttons -->
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayoutRadiosPage1">
-              <item>
-               <widget class="QRadioButton" name="radioButtonDG_page1">
-                <property name="font">
-                 <font>
-                  <pointsize>25</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>DG</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="radioButtonDGIDEM_page1">
-                <property name="font">
-                 <font>
-                  <pointsize>25</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>DG IDEM</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <!-- Top Text Input -->
+            <!-- Top Text Input for DG -->
             <item>
              <widget class="QTextEdit" name="textInputPage1">
               <property name="font">
                <font>
-                <pointsize>15</pointsize>
+                <pointsize>13</pointsize>
                </font>
               </property>
               <property name="placeholderText">
                <string>DG DEO:VELIKIM SLOVIMA BEZ DG PREFIKSA</string>
               </property>
-              <property name="minimumHeight">
-               <number>80</number>
-              </property>
-              <property name="maximumHeight">
-               <number>120</number>
-              </property>
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                 <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
+                <verstretch>2</verstretch> <!-- 2 parts -->
                </sizepolicy>
               </property>
              </widget>
@@ -111,7 +127,7 @@
              <widget class="QTextEdit" name="diagnosisInputPage1">
               <property name="font">
                <font>
-                <pointsize>15</pointsize>
+                <pointsize>13</pointsize>
                </font>
               </property>
               <property name="placeholderText">
@@ -120,7 +136,7 @@
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
-                <verstretch>1</verstretch>
+                <verstretch>5</verstretch> <!-- 5 parts -->
                </sizepolicy>
               </property>
              </widget>
@@ -132,7 +148,7 @@
                <widget class="QDateEdit" name="dateEditPage1">
                 <property name="font">
                  <font>
-                  <pointsize>15</pointsize>
+                  <pointsize>13</pointsize>
                  </font>
                 </property>
                 <property name="displayFormat">
@@ -144,16 +160,15 @@
                </widget>
               </item>
               <item>
-               <spacer name="horizontalSpacerPage1">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </spacer>
+               <spacer name="horizontalSpacerPage1"/>
               </item>
               <item>
                <widget class="QPushButton" name="log_button_page1">
                 <property name="text">
-                 <string>Napravi izeštaj</string>
+                 <string>Napravi izveštaj</string>
+                </property>
+                <property name="minimumHeight">
+                 <number>40</number>
                 </property>
                </widget>
               </item>
@@ -164,56 +179,21 @@
           <!-- Page 2 -->
           <widget class="QWidget" name="page2">
            <layout class="QVBoxLayout" name="verticalLayoutPage2">
-            <!-- Radio Buttons -->
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayoutRadiosPage2">
-              <item>
-               <widget class="QRadioButton" name="radioButtonDG_page2">
-                <property name="font">
-                 <font>
-                  <pointsize>25</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>DG</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="radioButtonDGIDEM_page2">
-                <property name="font">
-                 <font>
-                  <pointsize>25</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>DG IDEM</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <!-- Top Text Input -->
+            <!-- Top Text Input for DG -->
             <item>
              <widget class="QTextEdit" name="textInputPage2">
               <property name="font">
                <font>
-                <pointsize>15</pointsize>
+                <pointsize>13</pointsize>
                </font>
               </property>
               <property name="placeholderText">
                <string>DG DEO:VELIKIM SLOVIMA BEZ DG PREFIKSA</string>
               </property>
-              <property name="minimumHeight">
-               <number>80</number>
-              </property>
-              <property name="maximumHeight">
-               <number>120</number>
-              </property>
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                 <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
+                <verstretch>2</verstretch> <!-- 2 parts -->
                </sizepolicy>
               </property>
              </widget>
@@ -223,7 +203,7 @@
              <widget class="QTextEdit" name="diagnosisInputPage2">
               <property name="font">
                <font>
-                <pointsize>15</pointsize>
+                <pointsize>13</pointsize>
                </font>
               </property>
               <property name="placeholderText">
@@ -232,7 +212,7 @@
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
-                <verstretch>1</verstretch>
+                <verstretch>5</verstretch> <!-- 5 parts -->
                </sizepolicy>
               </property>
              </widget>
@@ -244,7 +224,7 @@
                <widget class="QDateEdit" name="dateEditPage2">
                 <property name="font">
                  <font>
-                  <pointsize>15</pointsize>
+                  <pointsize>13</pointsize>
                  </font>
                 </property>
                 <property name="displayFormat">
@@ -256,16 +236,15 @@
                </widget>
               </item>
               <item>
-               <spacer name="horizontalSpacerPage2">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </spacer>
+               <spacer name="horizontalSpacerPage2"/>
               </item>
               <item>
                <widget class="QPushButton" name="log_button_page2">
                 <property name="text">
-                 <string>Submit</string>
+                 <string>Napravi izveštaj</string>
+                </property>
+                <property name="minimumHeight">
+                 <number>40</number>
                 </property>
                </widget>
               </item>
