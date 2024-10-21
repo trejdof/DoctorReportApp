@@ -1,8 +1,11 @@
 {
     "header": [
-
+        "PLACEHOLDER ORDINATION NAME",
+        "PLACEHOLDER TYPE OF ORDINATION",
+        "PLACEHOLDER NAME AND LOCATION"
     ],
     "footer": [
-
+        "PLACEHOLDER DR NAME",
+        "PLACEHOLDER SPECIALISATION NAME"
     ]
 }
